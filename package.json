@@ -1,0 +1,27 @@
+{
+  "name": "new_musicomm",
+  "version": "0.1.0",
+  "description": "renewal musicomm",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NamSeungho/vue_musicomm.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NamSeungho/vue_musicomm/issues"
+  },
+  "homepage": "https://github.com/NamSeungho/vue_musicomm#readme",
+  "dependencies": {
+    "connect-mongo": "^3.2.0",
+    "ejs": "^3.0.1",
+    "express": "^4.17.1",
+    "express-session": "^1.17.0",
+    "mongodb": "^3.5.2",
+    "socket.io": "^2.3.0"
+  }
+}
