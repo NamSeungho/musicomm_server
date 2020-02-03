@@ -1,7 +1,7 @@
 # musicomm renewal
 
 ## 서버구동 방법
-npm run start
+- npm run start
 
 ## 서버 로직 모듈화
 
