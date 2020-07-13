@@ -501,7 +501,6 @@ function getMusicInfoByArtistType(db, type, limit, callback) {
     });
 }
 
-
 exports.getMusic = function(db, params, callbackSuccess, callbackFail) {
     db.collection('music').aggregate(
         [{

@@ -4,7 +4,7 @@
   "description": "renewal musicomm",
   "main": "app.js",
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "babel-node app.js"
   },
   "repository": {
     "type": "git",
@@ -24,10 +24,20 @@
     "crypto": "^1.0.1",
     "ejs": "^3.0.1",
     "express": "^4.17.1",
+    "express-graphql": "^0.11.0",
     "express-session": "^1.17.0",
     "fs": "0.0.1-security",
+    "graphql": "^15.3.0",
+    "graphql-tools": "^6.0.12",
     "greenlock-express": "^4.0.3",
     "mongodb": "^3.5.2",
+    "mongoose": "^5.9.23",
+    "nodemon": "^2.0.4",
     "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-3": "^6.24.1"
   }
 }

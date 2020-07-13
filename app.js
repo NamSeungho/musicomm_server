@@ -18,43 +18,20 @@ const ArtistApiRouter   = require('./routes/api/artist');
 const ProfileApiRouter  = require('./routes/api/profile');
 const ReportApiRouter   = require('./routes/api/report');
 
-const dbChat            = require('./db/chat');
+import socket from './socket';
+
+import mongoose from 'mongoose';
+import scheme from './scheme';
+const { graphqlHTTP } = require('express-graphql');
 
 const app           = express();
 
-// SSL 적용
-// require("greenlock-express").init({
-//     packageRoot: __dirname,
-//     configDir: "./greenlock.d",
-//     maintainerEmail: "skatmdgh1221@nate.com",
-//
-//     // whether or not to run at cloudscale
-//     cluster: false
-// }).ready(httpsWorker);
-//
-// // Socket.io 세팅
-// function httpsWorker(glx) {
-//     const server = glx.httpsServer();
-//     const io = require("socket.io")(server);
-//
-//     io.on("connection", function(socket) {
-//         socket.on('chat', function(data){
-//             dbChat.insertChattingMessage(db, data);
-//             socket.emit('chat', data);
-//         });
-//     });
-//
-//     glx.serveApp(app);
-// }
+mongoose.connect('mongodb://localhost/musicomm', { useNewUrlParser: true, useUnifiedTopology: true });
 
-const server = app.listen(2000);
-const io = require("socket.io")(server);
-io.on("connection", function(socket) {
-    socket.on('chat', function(data){
-        dbChat.insertChattingMessage(db, data);
-        socket.emit('chat', data);
-    });
-});
+app.use(`/graphql`, graphqlHTTP({
+    schema: scheme,
+    graphiql: true
+}));
 
 let db = null;
 
@@ -62,7 +39,7 @@ function connectDB () {
     return new Promise((resolve, reject) => {
         MongoClient.connect(require('./const').DB_URL, {
             useUnifiedTopology: true
-        }, function (err, client) {
+        }, (err, client) => {
             assert.equal(null, err);
 
             db = client.db(require('./const').DB_NAME);
@@ -70,6 +47,40 @@ function connectDB () {
             console.log('Completely connect MongoDB');
             resolve();
         });
+    });
+}
+
+function createServer () {
+    return new Promise((resolve, reject) => {
+        /* Create HTTP server & Apply SSL */
+        require('greenlock-express').init({
+            packageRoot: __dirname,
+            configDir: './greenlock.d',
+            maintainerEmail: 'skatmdgh1221@nate.com',
+            cluster: false
+        }).ready((glx) => {
+            /* Socket module dependencies */
+            socket(glx.httpsServer(), db);
+
+            /* Create server */
+            glx.serveApp(app);
+        });
+
+        resolve();
+    });
+}
+
+function createLocalServer () {
+    return new Promise((resolve, reject) => {
+        /* Create HTTP server */
+        const PORT = require('./const').PORT;
+        const server = app.listen(PORT, () => {
+            console.log('Open HTTP server on ' + PORT + ' port');
+        });
+
+        socket(server, db);
+
+        resolve();
     });
 }
 
@@ -82,6 +93,8 @@ async function runApplication () {
 
     /* Mongo DB 연결 */
     await connectDB();
+    // await createServer();
+    await createLocalServer();
 
     /* Session 미들웨어 설정 */
     app.use(session({
@@ -122,7 +135,7 @@ async function runApplication () {
     app.use('/api/profile', ProfileApiRouter(db));
     app.use('/api/report', ReportApiRouter(db));
 
-    app.get('/lyrics/:no', function(req, res) {
+    app.get('/lyrics/:no', (req, res) => {
         fs.readFile(appRoot + '/files/lyrics/' + req.params.no + '.txt', function(err, data) {
             res.writeHead(200, {'Content-Type': 'text/plain'});
             res.end(data);
