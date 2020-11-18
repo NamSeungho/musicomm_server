@@ -58,5 +58,19 @@ module.exports = function (db) {
         });
     });
 
+    router.post('/change_music_id', function(req, res, next) {
+        fs.rename(appRoot + '/files/lyrics/' + req.body.oldVideoId + '.txt', appRoot + '/files/lyrics/' + req.body.newVideoId + '.txt', function (err) {
+            if (err) throw err;
+
+            dbMusic.changeMusicId(db, req.body, function(result) {
+                res.writeHead(200);
+                res.end(JSON.stringify(result));
+            }, function(result) {
+                res.writeHead(200);
+                res.end(JSON.stringify(result));
+            });
+        });
+    });
+
     return router;
 };

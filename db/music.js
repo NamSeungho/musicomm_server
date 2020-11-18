@@ -539,3 +539,23 @@ exports.getArtist = function(db, params, callbackSuccess, callbackFail) {
         });
     });
 };
+
+exports.changeMusicId = function(db, params, callbackSuccess, callbackFail) {
+    db.collection('music').updateMany({ video: params.oldVideoId }, { $set: { video: params.newVideoId } }, function(err, doc) {
+        if (err) throw err;
+
+        db.collection('play').updateMany({ video: params.oldVideoId }, { $set: { video: params.newVideoId } }, function(err, doc) {
+            if (err) throw err;
+
+            db.collection('favorite').updateMany({ video: params.oldVideoId }, { $set: { video: params.newVideoId } }, function(err, doc) {
+                if (err) throw err;
+
+                callbackSuccess({
+                    code    : "0000",
+                    message : "Success",
+                    result  : {}
+                });
+            });
+        });
+    });
+};
