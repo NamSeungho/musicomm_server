@@ -559,3 +559,23 @@ exports.changeMusicId = function(db, params, callbackSuccess, callbackFail) {
         });
     });
 };
+
+exports.deleteMusic = function(db, params, callbackSuccess, callbackFail) {
+    db.collection('music').deleteMany({ video: params.videoId }, function(err, doc) {
+        if (err) throw err;
+
+        db.collection('play').deleteMany({ video: params.videoId }, function(err, doc) {
+            if (err) throw err;
+
+            db.collection('favorite').deleteMany({ video: params.videoId }, function(err, doc) {
+                if (err) throw err;
+
+                callbackSuccess({
+                    code    : "0000",
+                    message : "Success",
+                    result  : {}
+                });
+            });
+        });
+    });
+};

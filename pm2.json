@@ -1,0 +1,9 @@
+{
+  "apps": [
+    {
+      "name": "musicomm",
+      "script": "npm",
+      "args" : "start"
+    }
+  ]
+}

@@ -60,9 +60,27 @@ module.exports = function (db) {
 
     router.post('/change_music_id', function(req, res, next) {
         fs.rename(appRoot + '/files/lyrics/' + req.body.oldVideoId + '.txt', appRoot + '/files/lyrics/' + req.body.newVideoId + '.txt', function (err) {
-            if (err) throw err;
+            if (err) {
+                console.log(err);
+            }
 
             dbMusic.changeMusicId(db, req.body, function(result) {
+                res.writeHead(200);
+                res.end(JSON.stringify(result));
+            }, function(result) {
+                res.writeHead(200);
+                res.end(JSON.stringify(result));
+            });
+        });
+    });
+
+    router.post('/delete_music', function(req, res, next) {
+        fs.unlink(appRoot + '/files/lyrics/' + req.body.videoId + '.txt', function (err) {
+            if (err) {
+                console.log(err);
+            }
+
+            dbMusic.deleteMusic(db, req.body, function(result) {
                 res.writeHead(200);
                 res.end(JSON.stringify(result));
             }, function(result) {
