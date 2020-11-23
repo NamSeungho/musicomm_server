@@ -19,5 +19,21 @@ module.exports = function (db) {
         });
     });
 
+    router.post('/change_nickname', function(req, res) {
+        if (!req.session || !req.session.user || req.body.id !== req.session.user) {
+            req.body.id = '';
+        }
+
+        dbAccount.changeNickname(db, req.body, function(result) {
+            req.session.nickname = req.body.nickname;
+
+            res.writeHead(200);
+            res.end(JSON.stringify(result));
+        }, function(result) {
+            res.writeHead(200);
+            res.end(JSON.stringify(result));
+        });
+    });
+
     return router;
 };

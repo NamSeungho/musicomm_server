@@ -331,6 +331,37 @@ exports.findAccountDetail = function(db, params, callbackSuccess, callbackFail) 
     });
 };
 
+exports.changeNickname = function(db, params, callbackSuccess, callbackFail) {
+    params.nickname = params.nickname.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    db.collection('account').findOne({ _id: params.id }, function(err, doc) {
+        if (err) throw err;
+
+        if(doc == null) {
+            console.log("계정이 존재하지 않습니다 - A001 (" + params.id + ")");
+
+            callbackFail({
+                code   : "A001",
+                message: "계정이 존재하지 않습니다"
+            });
+        }
+        else {
+            db.collection('account').updateOne({ _id: params.id }, { $set: { nickname: params.nickname } }, function(err, doc) {
+                if (err) throw err;
+
+                callbackSuccess({
+                    code    : "0000",
+                    message : "Success",
+                    result  : {
+                        _id     : doc._id,
+                        nickname: doc.nickname
+                    }
+                });
+            });
+        }
+    });
+};
+
 exports.insertAccess = function(db, params) {
     params._id = params._id.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
